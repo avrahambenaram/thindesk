@@ -30,10 +30,6 @@ public class ChamadoService {
         return chamadoRepository.save(chamado);
     }
 
-    public Chamado criarChamado(Chamado chamado) {
-        return chamadoRepository.save(chamado);
-    }
-
     public List<Chamado> listarChamados() {
         return chamadoRepository.findAll();
     }
@@ -57,18 +53,5 @@ public class ChamadoService {
         chamado.setTecnico(tecnico);
         chamado.setDataResolucao(LocalDateTime.now());
         return chamadoRepository.save(chamado);
-    }
-
-    public Chamado atualizarChamado(String id, Chamado chamadoAtualizado) {
-        return chamadoRepository.findById(id)
-                .map(chamado -> {
-                    chamado.setDescricao(chamadoAtualizado.getDescricao());
-                    chamado.setStatus(chamadoAtualizado.getStatus());
-                    chamado.setTipo(chamadoAtualizado.getTipo());
-                    chamado.setTecnico(chamadoAtualizado.getTecnico());
-                    chamado.setUsuario(chamadoAtualizado.getUsuario());
-                    return chamadoRepository.save(chamado);
-                })
-                .orElseThrow(() -> new RuntimeException("Chamado não encontrado com id: " + id));
     }
 }
