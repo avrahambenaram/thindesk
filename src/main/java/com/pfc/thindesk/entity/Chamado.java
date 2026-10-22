@@ -14,6 +14,8 @@ public class Chamado {
     private String status;
     private LocalDateTime dataAbertura;
     private String tecnico;
+    private String solucao;
+    private LocalDateTime dataResolucao;
     private String tipo;
     private String usuario;
 
@@ -63,6 +65,22 @@ public class Chamado {
 
     public void setTecnico(String tecnico) {
         this.tecnico = tecnico;
+    }
+
+    public String getSolucao() {
+        return solucao;
+    }
+
+    public void setSolucao(String solucao) {
+        this.solucao = solucao;
+    }
+
+    public LocalDateTime getDataResolucao() {
+        return dataResolucao;
+    }
+
+    public void setDataResolucao(LocalDateTime dataResolucao) {
+        this.dataResolucao = dataResolucao;
     }
 
     public String getTipo() {

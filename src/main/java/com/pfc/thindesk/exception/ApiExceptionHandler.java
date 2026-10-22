@@ -14,4 +14,11 @@ public class ApiExceptionHandler {
         problemDetail.setTitle("Chamado não encontrado");
         return problemDetail;
     }
+
+    @ExceptionHandler(ChamadoJaResolvidoException.class)
+    public ProblemDetail tratarChamadoJaResolvido(ChamadoJaResolvidoException exception) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, exception.getMessage());
+        problemDetail.setTitle("Chamado já resolvido");
+        return problemDetail;
+    }
 }

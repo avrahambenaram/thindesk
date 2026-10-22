@@ -1,6 +1,7 @@
 package com.pfc.thindesk.controller;
 
 import com.pfc.thindesk.dto.CriarChamadoRequest;
+import com.pfc.thindesk.dto.ResolverChamadoRequest;
 import com.pfc.thindesk.entity.Chamado;
 import com.pfc.thindesk.service.ChamadoService;
 import jakarta.validation.Valid;
@@ -48,6 +49,12 @@ public class ChamadoController {
     @GetMapping("/{id}")
     public Chamado consultarChamado(@PathVariable String id) {
         return chamadoService.buscarPorId(id);
+    }
+
+    @PutMapping("/{id}/resolver")
+    public Chamado resolverChamado(@PathVariable String id, @Valid @RequestBody ResolverChamadoRequest request,
+            Authentication authentication) {
+        return chamadoService.resolver(id, request.solucao(), authentication.getName());
     }
 
     @PutMapping("/{id}")
