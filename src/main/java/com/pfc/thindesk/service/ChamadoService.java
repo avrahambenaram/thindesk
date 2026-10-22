@@ -1,6 +1,7 @@
 package com.pfc.thindesk.service;
 
 import com.pfc.thindesk.entity.Chamado;
+import com.pfc.thindesk.exception.ChamadoNaoEncontradoException;
 import com.pfc.thindesk.repository.ChamadoRepository;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,6 +34,15 @@ public class ChamadoService {
 
     public List<Chamado> listarChamados() {
         return chamadoRepository.findAll();
+    }
+
+    public List<Chamado> listarPorUsuario(String usuario) {
+        return chamadoRepository.findByUsuarioOrderByDataAberturaDesc(usuario);
+    }
+
+    public Chamado buscarPorId(String id) {
+        return chamadoRepository.findById(id)
+                .orElseThrow(() -> new ChamadoNaoEncontradoException(id));
     }
 
     public Chamado atualizarChamado(String id, Chamado chamadoAtualizado) {

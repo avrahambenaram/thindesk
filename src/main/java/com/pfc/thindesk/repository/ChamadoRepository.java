@@ -1,11 +1,9 @@
 package com.pfc.thindesk.repository;
 
 import com.pfc.thindesk.entity.Chamado;
-import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.List;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface ChamadoRepository extends MongoRepository<Chamado, String> {
-    List<Chamado> findByStatus(String status);
-    
-    
+    List<Chamado> findByUsuarioOrderByDataAberturaDesc(String usuario);
 }

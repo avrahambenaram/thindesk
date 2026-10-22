@@ -40,6 +40,16 @@ public class ChamadoController {
         return chamadoService.listarChamados();
     }
 
+    @GetMapping("/usuario/{id}")
+    public List<Chamado> listarChamadosDoUsuario(@PathVariable String id) {
+        return chamadoService.listarPorUsuario(id);
+    }
+
+    @GetMapping("/{id}")
+    public Chamado consultarChamado(@PathVariable String id) {
+        return chamadoService.buscarPorId(id);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<Chamado> atualizarChamado(@PathVariable String id, @RequestBody Chamado chamadoAtualizado) {
         Chamado chamado = chamadoService.atualizarChamado(id, chamadoAtualizado);
