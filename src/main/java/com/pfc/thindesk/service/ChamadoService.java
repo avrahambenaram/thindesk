@@ -1,16 +1,31 @@
 package com.pfc.thindesk.service;
 
 import com.pfc.thindesk.entity.Chamado;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import java.util.List;
 import com.pfc.thindesk.repository.ChamadoRepository;
+import java.time.LocalDateTime;
+import java.util.List;
+import org.springframework.stereotype.Service;
 
 @Service
 public class ChamadoService {
 
-    @Autowired
-    private ChamadoRepository chamadoRepository;
+    private static final String STATUS_ABERTO = "ABERTO";
+
+    private final ChamadoRepository chamadoRepository;
+
+    public ChamadoService(ChamadoRepository chamadoRepository) {
+        this.chamadoRepository = chamadoRepository;
+    }
+
+    public Chamado abrir(String titulo, String descricao, String usuario) {
+        Chamado chamado = new Chamado();
+        chamado.setTitulo(titulo.trim());
+        chamado.setDescricao(descricao.trim());
+        chamado.setStatus(STATUS_ABERTO);
+        chamado.setUsuario(usuario);
+        chamado.setDataAbertura(LocalDateTime.now());
+        return chamadoRepository.save(chamado);
+    }
 
     public Chamado criarChamado(Chamado chamado) {
         return chamadoRepository.save(chamado);
@@ -32,5 +47,4 @@ public class ChamadoService {
                 })
                 .orElseThrow(() -> new RuntimeException("Chamado não encontrado com id: " + id));
     }
-
 }
