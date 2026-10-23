@@ -45,19 +45,19 @@ public class ChamadoController {
 
     @GetMapping("/usuario/{id}")
     @Operation(summary = "Listar chamados do usuário", description = "Lista os chamados do usuário informado")
-    public List<Chamado> listarChamadosDoUsuario(@PathVariable String id) {
+    public List<Chamado> listarChamadosDoUsuario(@PathVariable("id") String id) {
         return chamadoService.listarPorUsuario(id);
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Consultar chamado", description = "Consulta os detalhes e o status de um chamado")
-    public Chamado consultarChamado(@PathVariable String id) {
+    public Chamado consultarChamado(@PathVariable("id") String id) {
         return chamadoService.buscarPorId(id);
     }
 
     @PutMapping("/{id}/resolver")
     @Operation(summary = "Resolver chamado", description = "Registra a solução e altera o status para RESOLVIDO")
-    public Chamado resolverChamado(@PathVariable String id, @Valid @RequestBody ResolverChamadoRequest request,
+    public Chamado resolverChamado(@PathVariable("id") String id, @Valid @RequestBody ResolverChamadoRequest request,
             Authentication authentication) {
         return chamadoService.resolver(id, request.solucao(), authentication.getName());
     }
