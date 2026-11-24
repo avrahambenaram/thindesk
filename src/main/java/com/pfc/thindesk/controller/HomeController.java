@@ -5,9 +5,15 @@ import org.slf4j.LoggerFactory;
 import com.pfc.thindesk.entity.Cliente;
 import com.pfc.thindesk.entity.Chamado;
 import com.pfc.thindesk.entity.HorarioAtendimento;
+import com.pfc.thindesk.entity.Tecnico;
+import com.pfc.thindesk.entity.TipoChamado;
+import com.pfc.thindesk.entity.Recurso;
 import com.pfc.thindesk.service.ClienteService;
 import com.pfc.thindesk.service.ChamadoService;
 import com.pfc.thindesk.service.HorarioAtendimentoService;
+import com.pfc.thindesk.service.TecnicoService;
+import com.pfc.thindesk.service.TipoChamadoService;
+import com.pfc.thindesk.service.RecursoService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -26,6 +32,12 @@ public class HomeController {
     private ClienteService clienteService;
     @Autowired
     private HorarioAtendimentoService horarioAtendimentoService;
+    @Autowired
+    private TecnicoService tecnicoService;
+    @Autowired
+    private TipoChamadoService tipoChamadoService;
+    @Autowired
+    private RecursoService recursoService;
 
     @GetMapping("/login")
     public String login() {
@@ -64,11 +76,41 @@ public class HomeController {
     @GetMapping("/ajustes-horarios")
     public String horarios(Model model) {
         List<HorarioAtendimento> horarios = horarioAtendimentoService.listarTodos();
-        model.addAttribute("ajustes-horarios", horarios);
+        model.addAttribute("ajustesHorarios", horarios);
         String fragment = "ajustes-horarios :: content";
-        log.info("Carregando fragmento: {}", fragment); // Log para depuração
+        log.info("Carregando fragmento: {}", fragment);
         model.addAttribute("content", fragment);
         return "ajustes-horarios";
+    }
+
+    @GetMapping("/tecnicos")
+    public String tecnicos(Model model) {
+        List<Tecnico> tecnicos = tecnicoService.listarTodos();
+        model.addAttribute("tecnicos", tecnicos);
+        String fragment = "tecnicos :: content";
+        log.info("Carregando fragmento: {}", fragment);
+        model.addAttribute("content", fragment);
+        return "tecnicos";
+    }
+
+    @GetMapping("/tipo-chamado")
+    public String tipoChamado(Model model) {
+        List<TipoChamado> tiposChamado = tipoChamadoService.listarTodos();
+        model.addAttribute("tiposChamado", tiposChamado);
+        String fragment = "tipo-chamado :: content";
+        log.info("Carregando fragmento: {}", fragment);
+        model.addAttribute("content", fragment);
+        return "tipo-chamado";
+    }
+
+    @GetMapping("/recursos")
+    public String recursos(Model model) {
+        List<Recurso> recursos = recursoService.listarTodos();
+        model.addAttribute("recursos", recursos);
+        String fragment = "recursos :: content";
+        log.info("Carregando fragmento: {}", fragment);
+        model.addAttribute("content", fragment);
+        return "recursos";
     }
 
 }
