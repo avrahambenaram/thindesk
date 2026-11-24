@@ -17,7 +17,25 @@ public class Chamado {
     private String solucao;
     private LocalDateTime dataResolucao;
     private String tipo;
+    private String tipoId;
     private String usuario;
+    private String tecnicoId;
+
+    public String getTipoId() {
+        return tipoId;
+    }
+
+    public void setTipoId(String tipoId) {
+        this.tipoId = tipoId;
+    }
+
+    public String getTecnicoId() {
+        return tecnicoId;
+    }
+
+    public void setTecnicoId(String tecnicoId) {
+        this.tecnicoId = tecnicoId;
+    }
 
     public String getId() {
         return id;

@@ -34,7 +34,7 @@ public class ChamadoController {
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Abrir chamado", description = "Abre um chamado associado ao usuário autenticado")
     public Chamado abrirChamado(@Valid @RequestBody CriarChamadoRequest request, Authentication authentication) {
-        return chamadoService.abrir(request.titulo(), request.descricao(), authentication.getName());
+        return chamadoService.abrir(request.titulo(), request.descricao(), request.tipoId(), authentication.getName());
     }
 
     @GetMapping

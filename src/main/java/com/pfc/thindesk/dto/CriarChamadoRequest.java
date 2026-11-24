@@ -9,5 +9,7 @@ public record CriarChamadoRequest(
         String titulo,
         @NotBlank(message = "A descrição é obrigatória")
         @Size(max = 2000, message = "A descrição deve ter no máximo 2000 caracteres")
-        String descricao) {
+        String descricao,
+        @NotBlank(message = "O tipo de chamado é obrigatório")
+        String tipoId) {
 }
