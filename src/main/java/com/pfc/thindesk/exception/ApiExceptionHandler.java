@@ -24,6 +24,13 @@ public class ApiExceptionHandler {
         return problemDetail;
     }
 
+    @ExceptionHandler(RegraDeNegocioException.class)
+    public ProblemDetail tratarRegraDeNegocio(RegraDeNegocioException exception) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(exception.getStatus(), exception.getMessage());
+        problemDetail.setTitle("Regra de negócio violada");
+        return problemDetail;
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ProblemDetail tratarErroDeValidacao(MethodArgumentNotValidException exception) {
         String mensagem = exception.getBindingResult().getFieldErrors().stream()
