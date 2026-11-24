@@ -3,10 +3,12 @@ package com.pfc.thindesk.entity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Document(collection = "tecnicos")
@@ -17,5 +19,5 @@ public class Tecnico {
     private String email;
     private String telefone;
     private String especialidade;
-    private boolean ativo;
+    private boolean ativo = true;
 }
