@@ -20,4 +20,5 @@ public class Tecnico {
     private String telefone;
     private String especialidade;
     private boolean ativo = true;
+    private String usuarioId;
 }

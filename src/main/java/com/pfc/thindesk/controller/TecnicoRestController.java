@@ -1,19 +1,30 @@
 package com.pfc.thindesk.controller;
 
+import com.pfc.thindesk.dto.CadastrarTecnicoRequest;
+import com.pfc.thindesk.dto.EditarTecnicoRequest;
 import com.pfc.thindesk.entity.Tecnico;
 import com.pfc.thindesk.service.TecnicoService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 import java.util.List;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/tecnicos")
-@CrossOrigin(origins = "*")
 public class TecnicoRestController {
 
-    @Autowired
-    private TecnicoService tecnicoService;
+    private final TecnicoService tecnicoService;
+
+    public TecnicoRestController(TecnicoService tecnicoService) {
+        this.tecnicoService = tecnicoService;
+    }
 
     @GetMapping
     public List<Tecnico> listar() {
@@ -21,27 +32,24 @@ public class TecnicoRestController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Tecnico> obter(@PathVariable String id) {
+    public ResponseEntity<Tecnico> obter(@PathVariable("id") String id) {
         Tecnico tecnico = tecnicoService.obterPorId(id);
         return tecnico != null ? ResponseEntity.ok(tecnico) : ResponseEntity.notFound().build();
     }
 
     @PostMapping
-    public ResponseEntity<Tecnico> criar(@RequestBody Tecnico tecnico) {
-        return ResponseEntity.ok(tecnicoService.salvar(tecnico));
+    public ResponseEntity<Tecnico> criar(@Valid @RequestBody CadastrarTecnicoRequest request) {
+        return ResponseEntity.ok(tecnicoService.cadastrar(request));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Tecnico> atualizar(@PathVariable String id, @RequestBody Tecnico tecnico) {
-        if (tecnicoService.obterPorId(id) == null) {
-            return ResponseEntity.notFound().build();
-        }
-        tecnico.setId(id);
-        return ResponseEntity.ok(tecnicoService.salvar(tecnico));
+    public ResponseEntity<Tecnico> atualizar(@PathVariable("id") String id,
+                                             @Valid @RequestBody EditarTecnicoRequest request) {
+        return ResponseEntity.ok(tecnicoService.editar(id, request));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable String id) {
+    public ResponseEntity<Void> deletar(@PathVariable("id") String id) {
         tecnicoService.deletar(id);
         return ResponseEntity.noContent().build();
     }
