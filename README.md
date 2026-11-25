@@ -85,14 +85,14 @@ ADMIN_PASSWORD=password
 
 ## 3. Usuário e senha iniciais da aplicação
 
-Na configuração de desenvolvimento atual, as credenciais iniciais de acesso à aplicação são:
+Ao iniciar, a aplicação cria um administrador a partir de `ADMIN_USERNAME` e `ADMIN_PASSWORD` do `.env` (se ele ainda não existir). Com os valores de exemplo do `.env.example`, as credenciais de acesso são:
 
 | Campo | Valor |
 |---|---|
-| Usuário | `user` |
+| Usuário | `admin` |
 | Senha | `password` |
 
-Essas credenciais são para entrar na aplicação.
+Use essas credenciais na tela de login (`/login`). Elas são apenas de exemplo: troque `ADMIN_USERNAME` e `ADMIN_PASSWORD` em qualquer ambiente real. Se o administrador já existir no banco, a senha dele não é alterada pelo `.env`.
 
 ## 4. Executar a aplicação
 
