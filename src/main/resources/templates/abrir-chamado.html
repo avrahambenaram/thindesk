@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Abrir Chamado</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+        <link rel="stylesheet" th:href="@{/css/style.css}">
+    </head>
+    <body>
+        <!-- Botão para abrir/fechar a sidebar em telas pequenas -->
+        <div class="toggle-btn btn btn-dark d-md-none">
+            <span>&#9776;</span>
+        </div>
+
+        <aside>
+            <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+        </aside>
+
+        <main class="container-fluid mt-4">
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h1><i class="bi bi-headset"></i> Abrir Chamado</h1>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <form id="formChamado">
+                                <div class="mb-3">
+                                    <label for="tipoId" class="form-label">Tipo de chamado</label>
+                                    <select class="form-select" id="tipoId" required>
+                                        <option value="" selected disabled>Selecione...</option>
+                                        <option th:each="tipo : ${tiposAtivos}"
+                                                th:value="${tipo.id}"
+                                                th:text="${tipo.descricao}">Tipo</option>
+                                    </select>
+                                    <div th:if="${#lists.isEmpty(tiposAtivos)}" class="form-text text-danger">
+                                        Nenhum tipo de chamado ativo cadastrado. Cadastre um em Configurações.
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="titulo" class="form-label">Título</label>
+                                    <input type="text" class="form-control" id="titulo" maxlength="120" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="descricao" class="form-label">Descrição</label>
+                                    <textarea class="form-control" id="descricao" rows="5" maxlength="2000" required></textarea>
+                                </div>
+                                <div class="d-flex justify-content-end gap-2">
+                                    <a th:href="@{/chamados}" class="btn btn-secondary">Cancelar</a>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-send"></i> Abrir chamado
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <script th:src="@{/js/script.js}"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            document.getElementById('formChamado').addEventListener('submit', function (e) {
+                e.preventDefault();
+                const chamado = {
+                    tipoId: document.getElementById('tipoId').value,
+                    titulo: document.getElementById('titulo').value,
+                    descricao: document.getElementById('descricao').value
+                };
+
+                fetch('/api/chamados', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(chamado)
+                }).then(r => {
+                    if (r.ok) {
+                        alert('Chamado aberto com sucesso!');
+                        window.location.href = '/chamados';
+                    } else {
+                        r.json().then(p => alert(p.detail || 'Erro ao abrir chamado'));
+                    }
+                });
+            });
+        </script>
+    </body>
+</html>

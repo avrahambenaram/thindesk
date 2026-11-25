@@ -83,6 +83,15 @@ public class HomeController {
         return "ajustes-horarios";
     }
 
+    @GetMapping("/abrir-chamado")
+    public String abrirChamado(Model model) {
+        List<TipoChamado> tiposAtivos = tipoChamadoService.listarTodos().stream()
+                .filter(TipoChamado::isAtivo)
+                .toList();
+        model.addAttribute("tiposAtivos", tiposAtivos);
+        return "abrir-chamado";
+    }
+
     @GetMapping("/tecnicos")
     public String tecnicos(Model model) {
         List<Tecnico> tecnicos = tecnicoService.listarTodos();
