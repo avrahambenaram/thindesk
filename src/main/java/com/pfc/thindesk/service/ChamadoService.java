@@ -20,7 +20,9 @@ import org.springframework.stereotype.Service;
 public class ChamadoService {
 
     private static final String STATUS_ABERTO = "ABERTO";
-    private static final String STATUS_RESOLVIDO = "RESOLVIDO";
+    private static final String STATUS_EM_ANDAMENTO = "Em Andamento";
+    private static final String STATUS_RESOLVIDO = "Resolvido";
+    private static final String STATUS_CANCELADO = "Cancelado";
 
     private final ChamadoRepository chamadoRepository;
     private final TipoChamadoService tipoChamadoService;
@@ -70,6 +72,20 @@ public class ChamadoService {
                 .orElseThrow(() -> new ChamadoNaoEncontradoException(id));
     }
 
+    public Chamado colocarEmAndamento(String id, String username) {
+        Tecnico tecnico = tecnicoDoLogin(username);
+        Chamado chamado = buscarPorId(id);
+        if (STATUS_RESOLVIDO.equalsIgnoreCase(chamado.getStatus()) || chamado.getDataResolucao() != null) {
+            throw new ChamadoJaResolvidoException(id);
+        }
+        LocalDateTime agora = LocalDateTime.now();
+        chamado.setStatus(STATUS_EM_ANDAMENTO);
+        chamado.setTecnicoId(tecnico.getId());
+        chamado.setTecnico(tecnico.getNome());
+        chamado.getHistorico().add(new EventoChamado("EM_ANDAMENTO", tecnico.getNome(), "Iniciado atendimento", agora));
+        return chamadoRepository.save(chamado);
+    }
+
     /** Só técnicos ativos resolvem chamados. O técnico é identificado pelo login. O motivo é obrigatório. */
     public Chamado resolver(String id, String motivo, String username) {
         Tecnico tecnico = tecnicoDoLogin(username);
@@ -86,6 +102,39 @@ public class ChamadoService {
         chamado.setDataResolucao(agora);
         chamado.getHistorico().add(new EventoChamado("RESOLUCAO", tecnico.getNome(), texto, agora));
         return chamadoRepository.save(chamado);
+    }
+
+    /** Admin edita título, descrição e tipo. Chamado resolvido ou cancelado não pode ser alterado. */
+    public Chamado editar(String id, String titulo, String descricao, String tipoId, String username) {
+        Chamado chamado = buscarPorId(id);
+        validarAlteravel(chamado);
+        TipoChamado tipo = tipoChamadoService.obterPorId(tipoId);
+        if (tipo == null) {
+            throw new RegraDeNegocioException(HttpStatus.BAD_REQUEST, "Tipo de chamado inválido");
+        }
+        chamado.setTitulo(titulo.trim());
+        chamado.setDescricao(descricao.trim());
+        chamado.setTipoId(tipo.getId());
+        chamado.setTipo(tipo.getDescricao());
+        chamado.getHistorico().add(new EventoChamado("EDICAO", username, "Chamado editado", LocalDateTime.now()));
+        return chamadoRepository.save(chamado);
+    }
+
+    public Chamado cancelar(String id, String username) {
+        Chamado chamado = buscarPorId(id);
+        validarAlteravel(chamado);
+        chamado.setStatus(STATUS_CANCELADO);
+        chamado.getHistorico().add(new EventoChamado("CANCELAMENTO", username, "Chamado cancelado", LocalDateTime.now()));
+        return chamadoRepository.save(chamado);
+    }
+
+    private void validarAlteravel(Chamado chamado) {
+        if (STATUS_RESOLVIDO.equalsIgnoreCase(chamado.getStatus()) || chamado.getDataResolucao() != null) {
+            throw new ChamadoJaResolvidoException(chamado.getId());
+        }
+        if (STATUS_CANCELADO.equalsIgnoreCase(chamado.getStatus())) {
+            throw new RegraDeNegocioException(HttpStatus.CONFLICT, "Chamado já cancelado");
+        }
     }
 
     private Tecnico tecnicoDoLogin(String username) {

@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -12,6 +13,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     @Bean
@@ -35,8 +37,14 @@ public class SecurityConfig {
                 .requestMatchers("/login", "/css/**", "/dist/**", "/plugins/**", "/js/**", "/images/**").permitAll()
                 .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
 
-                // Histórico completo do chamado: somente admin
-                .requestMatchers("/chamados/*/detalhes").hasRole("ADMIN")
+                // Dashboard: somente admin
+                .requestMatchers("/dashboard", "/dashboard/**").hasRole("ADMIN")
+
+                // Editar e cancelar chamado: somente admin
+                .requestMatchers("/chamados/atualizar/**", "/chamados/cancelar/**").hasRole("ADMIN")
+
+                // Detalhes do chamado: admin e técnico
+                .requestMatchers("/chamados/*/detalhes").hasAnyRole("ADMIN", "TECNICO")
 
                 // Leitura de chamados e tipos de chamado: qualquer usuário logado (inclusive técnico)
                 .requestMatchers(HttpMethod.GET, "/api/chamados", "/api/chamados/**",
@@ -47,7 +55,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/api/chamados").hasAnyRole("USUARIO", "ADMIN")
                 .requestMatchers("/abrir-chamado").hasAnyRole("USUARIO", "ADMIN")
 
-                // Resolver chamado: somente técnico
+                // Colocar em andamento e resolver: somente técnico
+                .requestMatchers(HttpMethod.PUT, "/api/chamados/*/andamento").hasRole("TECNICO")
                 .requestMatchers(HttpMethod.PUT, "/api/chamados/*/resolver").hasRole("TECNICO")
 
                 // Tipos de chamado: criar/editar/excluir somente admin

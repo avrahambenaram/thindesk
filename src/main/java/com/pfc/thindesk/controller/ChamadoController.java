@@ -55,6 +55,12 @@ public class ChamadoController {
         return chamadoService.buscarPorId(id);
     }
 
+    @PutMapping("/{id}/andamento")
+    @Operation(summary = "Colocar chamado em andamento", description = "Atribui o chamado ao técnico e altera o status para Em Andamento")
+    public Chamado colocarEmAndamento(@PathVariable("id") String id, Authentication authentication) {
+        return chamadoService.colocarEmAndamento(id, authentication.getName());
+    }
+
     @PutMapping("/{id}/resolver")
     @Operation(summary = "Resolver chamado", description = "Registra a solução e altera o status para RESOLVIDO")
     public Chamado resolverChamado(@PathVariable("id") String id, @Valid @RequestBody ResolverChamadoRequest request,
