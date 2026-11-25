@@ -8,7 +8,8 @@ COPY mvnw pom.xml ./
 RUN chmod +x mvnw && ./mvnw -B -q dependency:go-offline
 
 COPY src/ src/
-RUN ./mvnw -B -q package -DskipTests \
+# O pom não executa o repackage no package, então ele é chamado aqui para gerar o war executável
+RUN ./mvnw -B -q package spring-boot:repackage -DskipTests \
     && cp target/thindesk-*.war app.war
 
 # ---------- Execução ----------
