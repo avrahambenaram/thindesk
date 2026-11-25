@@ -36,7 +36,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/tecnicos", "/api/tecnicos/**",
                         "/api/tipos-chamado", "/api/tipos-chamado/**",
                         "/api/recursos", "/api/recursos/**",
-                        "/api/chamados", "/api/chamados/**").authenticated()
+                        "/api/chamados", "/api/chamados/**",
+                        "/api/clientes", "/api/clientes/**").authenticated()
 
                 // Abrir chamado: qualquer usuário logado
                 .requestMatchers(HttpMethod.POST, "/api/chamados").authenticated()
@@ -46,6 +47,7 @@ public class SecurityConfig {
 
                 // Cadastros e administração: somente ADMIN
                 .requestMatchers("/api/usuarios", "/api/usuarios/**").hasRole("ADMIN")
+                .requestMatchers("/api/clientes", "/api/clientes/**").hasRole("ADMIN")
                 .requestMatchers("/api/tecnicos", "/api/tecnicos/**",
                         "/api/tipos-chamado", "/api/tipos-chamado/**",
                         "/api/recursos", "/api/recursos/**",
