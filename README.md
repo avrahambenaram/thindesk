@@ -127,3 +127,41 @@ mvnw.cmd spring-boot:run
 Quando a aplicação iniciar, acesse:
 
 **http://localhost:8080**
+
+## 5. Painel administrativo (dashboard)
+
+Tela exclusiva do perfil **ADMIN**, disponível em `/dashboard` e no menu lateral como **Painel**. Ela mostra, em tempo real, a visão geral do sistema:
+
+- total de chamados, abertos, em andamento e resolvidos;
+- taxa de resolução (com barra de progresso);
+- total de clientes e de técnicos.
+
+Usuários sem o perfil ADMIN não veem o link no menu e recebem acesso negado se tentarem abrir a rota diretamente.
+
+![Painel administrativo](docs/painel.png)
+
+## 6. Versionamento
+
+O projeto segue o **Versionamento Semântico** ([semver.org](https://semver.org/lang/pt-BR/)), no formato:
+
+```
+MAJOR.MINOR.PATCH-ESTÁGIO
+```
+
+| Parte | Quando incrementar | Exemplo |
+|---|---|---|
+| `MAJOR` | mudanças incompatíveis (ex.: alterar o formato da API ou do banco de forma que quebre quem já usa) | `1.x.x` → `2.0.0` |
+| `MINOR` | nova funcionalidade compatível com a versão anterior | `1.0.0` → `1.1.0` |
+| `PATCH` | correção de bug, sem nova funcionalidade | `1.1.0` → `1.1.1` |
+| `ESTÁGIO` | maturidade da versão: `alpha` (em desenvolvimento, instável), `beta` (funcional, em testes), `rc` (candidata a lançamento). Sem sufixo = versão estável | `1.1.0-alpha` → `1.1.0-beta` → `1.1.0` |
+
+**Versão atual: `1.1.0-alpha`** (definida no `pom.xml`).
+
+Histórico resumido:
+
+| Versão | Conteúdo |
+|---|---|
+| `1.0.0-alpha` | cadastros (clientes, técnicos, tipos de chamado, recursos, horários), abertura e resolução de chamados com histórico, perfis de acesso (ADMIN, TECNICO, USUARIO) |
+| `1.1.0-alpha` | painel administrativo, técnico coloca chamado em andamento, admin edita e cancela chamados |
+
+Os commits seguem o padrão de uma linha com prefixo: `feat:` (nova funcionalidade → sobe o MINOR), `fix:` (correção → sobe o PATCH) e `chore:` (manutenção, sem alterar comportamento).
