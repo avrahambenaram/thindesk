@@ -2,49 +2,184 @@
 <html xmlns:th="http://www.thymeleaf.org">
     <head>
         <meta charset="UTF-8">
-        <title>Lista de Clientes</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Clientes</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
         <link rel="stylesheet" th:href="@{/css/style.css}">
     </head>
-
     <body>
-        <!-- Sidebar incluído como fragmento -->
-        <aside>
-            <div th:replace="~{fragments/sidebar :: sidebar}"></div>
-        </aside>
-
         <!-- Botão para abrir/fechar a sidebar em telas pequenas -->
         <div class="toggle-btn btn btn-dark d-md-none">
             <span>&#9776;</span>
         </div>
-        
-        <div class="container mt-4" th:fragment="content">
-            <h1 class="mt-4">Clientes</h1>
-            <table class="table table-bordered table-striped mt-3">
-                <thead>
-                    <tr>
-                        <th>Nome</th>
-                        <th>Telefone</th>
-                        <th>Setor</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Exemplo de conteúdo dinâmico -->
-                    <tr th:each="cliente : ${clientes}">
-                        <td th:text="${cliente.nome}"></td>
-                        <td th:text="${cliente.telefone}"></td>
-                        <td th:text="${cliente.setor}"></td>
-                        <td>
-                            <a th:href="@{'/clientes/novo/'}" class="btn btn-primary btn-sm">Novo</a>
-                            <a th:href="@{'/clientes/editar/' + ${cliente.id}}" class="btn btn-warning btn-sm">Editar</a>
-                            <a th:href="@{'/clientes/deletar/' + ${cliente.id}}" class="btn btn-danger btn-sm">Excluir</a>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+
+        <aside>
+            <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+        </aside>
+
+        <main class="container-fluid mt-4">
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <h1><i class="bi bi-person"></i> Clientes</h1>
+                </div>
+                <div class="col-md-4 text-end">
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#novoClienteModal">
+                        <i class="bi bi-plus-circle"></i> Novo Cliente
+                    </button>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Nome</th>
+                                <th>Telefone</th>
+                                <th>Setor</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="cliente : ${clientes}">
+                                <td th:text="${cliente.nome}">-</td>
+                                <td th:text="${cliente.telefone}">-</td>
+                                <td th:text="${cliente.setor}">-</td>
+                                <td>
+                                    <button class="btn btn-sm btn-warning"
+                                            data-bs-toggle="modal" data-bs-target="#editarClienteModal"
+                                            th:attr="data-id=${cliente.id}, data-nome=${cliente.nome}, data-telefone=${cliente.telefone}, data-setor=${cliente.setor}"
+                                            onclick="preencherEdicaoCliente(this)">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" th:onclick="deletarCliente([[${cliente.id}]])">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(clientes)}">
+                                <td colspan="4" class="text-center text-muted py-4">
+                                    <i class="bi bi-inbox"></i> Nenhum cliente cadastrado
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Modal Novo Cliente -->
+            <div class="modal fade" id="novoClienteModal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Novo Cliente</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form onsubmit="event.preventDefault(); salvarCliente();">
+                                <div class="mb-3">
+                                    <label for="nomeCliente" class="form-label">Nome</label>
+                                    <input type="text" class="form-control" id="nomeCliente" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="telefoneCliente" class="form-label">Telefone</label>
+                                    <input type="text" class="form-control" id="telefoneCliente">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="setorCliente" class="form-label">Setor</label>
+                                    <input type="text" class="form-control" id="setorCliente">
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                    <button type="submit" class="btn btn-primary">Salvar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Editar Cliente -->
+            <div class="modal fade" id="editarClienteModal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Editar Cliente</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <input type="hidden" id="editClienteId">
+                            <div class="mb-3">
+                                <label for="editClienteNome" class="form-label">Nome</label>
+                                <input type="text" class="form-control" id="editClienteNome" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="editClienteTelefone" class="form-label">Telefone</label>
+                                <input type="text" class="form-control" id="editClienteTelefone">
+                            </div>
+                            <div class="mb-3">
+                                <label for="editClienteSetor" class="form-label">Setor</label>
+                                <input type="text" class="form-control" id="editClienteSetor">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="button" class="btn btn-warning" onclick="salvarEdicaoCliente()">Salvar alterações</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
         <script th:src="@{/js/script.js}"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            function erroDaResposta(r, mensagemPadrao) {
+                r.json().then(p => alert(p.detail || mensagemPadrao)).catch(() => alert(mensagemPadrao));
+            }
+
+            function salvarCliente() {
+                const cliente = {
+                    nome: document.getElementById('nomeCliente').value,
+                    telefone: document.getElementById('telefoneCliente').value,
+                    setor: document.getElementById('setorCliente').value
+                };
+                fetch('/api/clientes', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(cliente)
+                }).then(r => r.ok ? location.reload() : erroDaResposta(r, 'Erro ao salvar cliente'));
+            }
+
+            function preencherEdicaoCliente(botao) {
+                const d = botao.dataset;
+                document.getElementById('editClienteId').value = d.id || '';
+                document.getElementById('editClienteNome').value = d.nome || '';
+                document.getElementById('editClienteTelefone').value = d.telefone || '';
+                document.getElementById('editClienteSetor').value = d.setor || '';
+            }
+
+            function salvarEdicaoCliente() {
+                const id = document.getElementById('editClienteId').value;
+                const cliente = {
+                    nome: document.getElementById('editClienteNome').value,
+                    telefone: document.getElementById('editClienteTelefone').value,
+                    setor: document.getElementById('editClienteSetor').value
+                };
+                fetch(`/api/clientes/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(cliente)
+                }).then(r => r.ok ? location.reload() : erroDaResposta(r, 'Erro ao editar cliente'));
+            }
+
+            function deletarCliente(id) {
+                if (confirm('Tem certeza que deseja excluir este cliente?')) {
+                    fetch(`/api/clientes/${id}`, { method: 'DELETE' })
+                        .then(r => r.ok ? location.reload() : erroDaResposta(r, 'Erro ao excluir cliente'));
+                }
+            }
+        </script>
     </body>
 </html>
