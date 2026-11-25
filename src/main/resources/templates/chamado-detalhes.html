@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Detalhes do Chamado</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+        <link rel="stylesheet" th:href="@{/css/style.css}">
+    </head>
+    <body>
+        <div class="toggle-btn btn btn-dark d-md-none">
+            <span>&#9776;</span>
+        </div>
+
+        <aside>
+            <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+        </aside>
+
+        <main class="container-fluid mt-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1><i class="bi bi-headset"></i> Chamado</h1>
+                <a th:href="@{/chamados}" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Voltar</a>
+            </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-header d-flex justify-content-between">
+                    <span class="fw-semibold" th:text="${chamado.titulo}">Título</span>
+                    <span th:if="${chamado.status == 'RESOLVIDO'}" class="badge bg-success">RESOLVIDO</span>
+                    <span th:unless="${chamado.status == 'RESOLVIDO'}" class="badge bg-warning text-dark">ABERTO</span>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-3">Descrição</dt>
+                        <dd class="col-sm-9" th:text="${chamado.descricao}">-</dd>
+                        <dt class="col-sm-3">Tipo</dt>
+                        <dd class="col-sm-9" th:text="${chamado.tipo}">-</dd>
+                        <dt class="col-sm-3">Aberto por</dt>
+                        <dd class="col-sm-9" th:text="${chamado.usuario}">-</dd>
+                        <dt class="col-sm-3">Aberto em</dt>
+                        <dd class="col-sm-9" th:text="${#temporals.format(chamado.dataAbertura, 'dd/MM/yyyy HH:mm')}">-</dd>
+                        <th:block th:if="${chamado.status == 'RESOLVIDO'}">
+                            <dt class="col-sm-3">Resolvido por</dt>
+                            <dd class="col-sm-9" th:text="${chamado.tecnico}">-</dd>
+                            <dt class="col-sm-3">Resolvido em</dt>
+                            <dd class="col-sm-9" th:text="${#temporals.format(chamado.dataResolucao, 'dd/MM/yyyy HH:mm')}">-</dd>
+                            <dt class="col-sm-3">Motivo da resolução</dt>
+                            <dd class="col-sm-9" th:text="${chamado.solucao}">-</dd>
+                        </th:block>
+                    </dl>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-header"><i class="bi bi-clock-history"></i> Histórico</div>
+                <div class="card-body">
+                    <table class="table table-sm mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Data</th>
+                                <th>Ação</th>
+                                <th>Responsável</th>
+                                <th>Detalhe</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="evento : ${chamado.historico}">
+                                <td th:text="${#temporals.format(evento.data, 'dd/MM/yyyy HH:mm')}">-</td>
+                                <td th:text="${evento.acao == 'RESOLUCAO' ? 'Resolução' : 'Abertura'}">-</td>
+                                <td th:text="${evento.responsavel}">-</td>
+                                <td th:text="${evento.motivo}">-</td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(chamado.historico)}">
+                                <td colspan="4" class="text-center text-muted">Sem registros</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+
+        <script th:src="@{/js/script.js}"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+</html>

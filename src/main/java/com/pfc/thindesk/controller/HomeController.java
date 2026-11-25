@@ -19,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import com.pfc.thindesk.service.ChamadoService;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
@@ -81,6 +83,12 @@ public class HomeController {
         log.info("Carregando fragmento: {}", fragment);
         model.addAttribute("content", fragment);
         return "ajustes-horarios";
+    }
+
+    @GetMapping("/chamados/{id}/detalhes")
+    public String detalhesChamado(@PathVariable("id") String id, Model model) {
+        model.addAttribute("chamado", chamadoService.buscarPorId(id));
+        return "chamado-detalhes";
     }
 
     @GetMapping("/abrir-chamado")

@@ -59,6 +59,6 @@ public class ChamadoController {
     @Operation(summary = "Resolver chamado", description = "Registra a solução e altera o status para RESOLVIDO")
     public Chamado resolverChamado(@PathVariable("id") String id, @Valid @RequestBody ResolverChamadoRequest request,
             Authentication authentication) {
-        return chamadoService.resolver(id, request.solucao(), authentication.getName());
+        return chamadoService.resolver(id, request.motivo(), authentication.getName());
     }
 }

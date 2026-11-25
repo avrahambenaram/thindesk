@@ -20,6 +20,15 @@ public class Chamado {
     private String tipoId;
     private String usuario;
     private String tecnicoId;
+    private java.util.List<EventoChamado> historico = new java.util.ArrayList<>();
+
+    public java.util.List<EventoChamado> getHistorico() {
+        return historico;
+    }
+
+    public void setHistorico(java.util.List<EventoChamado> historico) {
+        this.historico = historico;
+    }
 
     public String getTipoId() {
         return tipoId;

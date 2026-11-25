@@ -1,6 +1,7 @@
 package com.pfc.thindesk.service;
 
 import com.pfc.thindesk.entity.Chamado;
+import com.pfc.thindesk.entity.EventoChamado;
 import com.pfc.thindesk.entity.Tecnico;
 import com.pfc.thindesk.entity.TipoChamado;
 import com.pfc.thindesk.entity.Usuario;
@@ -51,6 +52,8 @@ public class ChamadoService {
         chamado.setStatus(STATUS_ABERTO);
         chamado.setUsuario(usuario);
         chamado.setDataAbertura(LocalDateTime.now());
+        chamado.getHistorico().add(new EventoChamado("ABERTURA", usuario, chamado.getDescricao(),
+                chamado.getDataAbertura()));
         return chamadoRepository.save(chamado);
     }
 
@@ -67,18 +70,21 @@ public class ChamadoService {
                 .orElseThrow(() -> new ChamadoNaoEncontradoException(id));
     }
 
-    /** Só técnicos ativos resolvem chamados. O técnico é identificado pelo login. */
-    public Chamado resolver(String id, String solucao, String username) {
+    /** Só técnicos ativos resolvem chamados. O técnico é identificado pelo login. O motivo é obrigatório. */
+    public Chamado resolver(String id, String motivo, String username) {
         Tecnico tecnico = tecnicoDoLogin(username);
         Chamado chamado = buscarPorId(id);
         if (STATUS_RESOLVIDO.equalsIgnoreCase(chamado.getStatus()) || chamado.getDataResolucao() != null) {
             throw new ChamadoJaResolvidoException(id);
         }
-        chamado.setSolucao(solucao.trim());
+        String texto = motivo.trim();
+        LocalDateTime agora = LocalDateTime.now();
+        chamado.setSolucao(texto);
         chamado.setStatus(STATUS_RESOLVIDO);
         chamado.setTecnicoId(tecnico.getId());
         chamado.setTecnico(tecnico.getNome());
-        chamado.setDataResolucao(LocalDateTime.now());
+        chamado.setDataResolucao(agora);
+        chamado.getHistorico().add(new EventoChamado("RESOLUCAO", tecnico.getNome(), texto, agora));
         return chamadoRepository.save(chamado);
     }
 
