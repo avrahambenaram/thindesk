@@ -1,0 +1,15 @@
+.git
+.gitignore
+.env
+.env.*
+!.env.example
+target/
+docs/
+*.png
+.classpath
+.factorypath
+.settings
+.project
+nbactions*.xml
+Dockerfile
+.dockerignore
