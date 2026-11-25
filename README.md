@@ -128,6 +128,31 @@ Quando a aplicação iniciar, acesse:
 
 **http://localhost:8080**
 
+### Executar com Docker
+
+A imagem não contém credenciais: a configuração vem do arquivo `.env` ou das variáveis de ambiente do sistema (`MONGODB_URI`, `ADMIN_USERNAME`, `ADMIN_PASSWORD` e, opcionalmente, `PORT`). A aplicação escuta na porta definida em `PORT` (padrão `8080`).
+
+Com Docker Compose (lê o `.env` da raiz ou o ambiente e publica a mesma porta `PORT` no host):
+
+```bash
+docker compose up --build
+```
+
+Com variáveis de ambiente do sistema:
+
+```bash
+MONGODB_URI="mongodb+srv://..." ADMIN_USERNAME=admin ADMIN_PASSWORD=senha PORT=9090 docker compose up --build
+```
+
+Sem Compose, montando o `.env` dentro do container:
+
+```bash
+docker build -t thindesk .
+docker run --rm -p 8080:8080 -v "$(pwd)/.env:/app/.env:ro" thindesk
+```
+
+> Se `PORT` for diferente de 8080, publique a mesma porta (`-p 9090:9090`). Evite `--env-file` quando houver valores entre aspas no `.env`, pois o Docker mantém as aspas; prefira o Compose ou o volume acima.
+
 ## 5. Painel administrativo (dashboard)
 
 Tela exclusiva do perfil **ADMIN**, disponível em `/dashboard` e no menu lateral como **Painel**. Ela mostra, em tempo real, a visão geral do sistema:

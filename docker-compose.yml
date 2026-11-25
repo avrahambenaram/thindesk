@@ -1,0 +1,14 @@
+# Lê as variáveis do arquivo .env (na raiz) ou do ambiente do sistema.
+# A aplicação escuta em PORT dentro do container e a mesma porta é publicada no host.
+services:
+  thindesk:
+    build: .
+    image: thindesk:1.1.0-alpha
+    ports:
+      - "${PORT:-8080}:${PORT:-8080}"
+    environment:
+      MONGODB_URI: ${MONGODB_URI:?defina MONGODB_URI no .env ou no ambiente}
+      ADMIN_USERNAME: ${ADMIN_USERNAME:?defina ADMIN_USERNAME no .env ou no ambiente}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?defina ADMIN_PASSWORD no .env ou no ambiente}
+      PORT: ${PORT:-8080}
+    restart: unless-stopped
