@@ -30,9 +30,9 @@ public class DashboardService {
         List<Chamado> chamados = chamadoRepository.findAll();
 
         long totalChamados = chamados.size();
-        long chamadosAbertos = chamados.stream().filter(c -> "Aberto".equals(c.getStatus())).count();
-        long chamadosResolvidos = chamados.stream().filter(c -> "Resolvido".equals(c.getStatus())).count();
-        long chamadosAndamento = chamados.stream().filter(c -> "Em Andamento".equals(c.getStatus())).count();
+        long chamadosAbertos = contar(chamados, "ABERTO");
+        long chamadosResolvidos = contar(chamados, "RESOLVIDO");
+        long chamadosAndamento = contar(chamados, "EM_ANDAMENTO");
 
         long totalClientes = clienteRepository.count();
         long totalTecnicos = tecnicoRepository.count();
@@ -48,5 +48,13 @@ public class DashboardService {
                 : 0);
 
         return stats;
+    }
+
+    /** Compara o status ignorando caixa e espaços ("Em Andamento", "EM_ANDAMENTO"...). */
+    private long contar(List<Chamado> chamados, String status) {
+        return chamados.stream()
+                .filter(c -> c.getStatus() != null
+                        && c.getStatus().trim().replace(' ', '_').equalsIgnoreCase(status))
+                .count();
     }
 }
