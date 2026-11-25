@@ -3,6 +3,7 @@ body {
     display: flex;
     min-height: 100vh;
     flex-direction: row;
+    margin: 0;
 }
 
 #sidebar {
@@ -11,6 +12,14 @@ body {
     background-color: #343a40;
     color: white;
     height: 100vh;
+    overflow-y: auto;
+    flex-shrink: 0;
+}
+
+main {
+    flex: 1;
+    overflow-y: auto;
+    max-height: 100vh;
 }
 
 #sidebar a {
